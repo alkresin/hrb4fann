@@ -4,6 +4,9 @@ Harbour bindings for FANN - Fast Artificial Neural Networks 2.2.0.
 
 ### Preface
 
+Harbour is a modern programming language, primarily used to create database/business programs. It is a modernized, open sourced and cross-platform version of the older and largely DOS-only Clipper system, which in turn developed from the dBase database market of the 1980s and 90s.
+See more info at http://www.kresin.ru/en/harbour.html
+
 Fast Artificial Neural Network Library is a free open source neural network library, which implements multilayer artificial neural networks in C with support for both fully connected and sparsely connected networks.
 FANN official site is http://leenissen.dk/
 
