@@ -2,7 +2,7 @@
 
 Function Main
 
-   LOCAL pAnn, i, j, arr
+   LOCAL pAnn
 
    pAnn := fann_create_standard( 3, {2, 3, 1} )
 

@@ -1,7 +1,7 @@
 /*
  */
 
-#include "fann.h"
+#include "doublefann.h"
 
 #include "hbvm.h"
 #include "hbstack.h"
@@ -169,9 +169,9 @@ HB_FUNC( FANN_RUN )
    uiLen = fann_get_num_output( ann );
    aMetr = hb_itemArrayNew( uiLen );
    temp = hb_itemNew( NULL );
-   for( ui = 2; ui <= uiLen; ui++ )
+   for( ui = 1; ui <= uiLen; ui++ )
    {
-      hb_itemPutND( temp, *(output+ui) );
+      hb_itemPutND( temp, *(output+ui-1) );
       hb_itemArrayPut( aMetr, ui, temp );
    }
    hb_itemRelease( temp );
