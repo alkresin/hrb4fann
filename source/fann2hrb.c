@@ -299,7 +299,7 @@ HB_FUNC( FANN_GET_LAYER_ARRAY )
 
    for( ui = 1; ui <= iLayers; ui++ )
    {
-      temp = hb_itemPutNL( NULL, *(pLayers+ui) );
+      temp = hb_itemPutNL( NULL, *(pLayers+ui-1) );
       hb_itemArrayPut( aMetr, ui, temp );
       hb_itemRelease( temp );
    }
@@ -326,7 +326,7 @@ HB_FUNC( FANN_GET_BIAS_ARRAY )
 
    for( ui = 1; ui <= iLayers; ui++ )
    {
-      temp = hb_itemPutNL( NULL, *(pBias+ui) );
+      temp = hb_itemPutNL( NULL, *(pBias+ui-1) );
       hb_itemArrayPut( aMetr, ui, temp );
       hb_itemRelease( temp );
    }
@@ -353,7 +353,7 @@ HB_FUNC( FANN_GET_CONNECTION_ARRAY )
    fann_get_connection_array( ann, pConns );
 
    temp = hb_itemNew( NULL );
-   for( ui = 1; ui <= iConns; ui++ )
+   for( ui = 0; ui < iConns; ui++ )
    {
       //fann_writelog( NULL, "from: %u %u %f\r\n ",(pConns+ui)->from_neuron, (pConns+ui)->to_neuron, (pConns+ui)->weight );
       tarr = hb_itemArrayNew( 3 );
@@ -364,7 +364,7 @@ HB_FUNC( FANN_GET_CONNECTION_ARRAY )
       hb_itemPutND( temp, pConns[ui].weight );
       hb_itemArrayPut( tarr, 3, temp );
 
-      hb_itemArrayPut( aMetr, ui, tarr );
+      hb_itemArrayPut( aMetr, ui+1, tarr );
       hb_itemRelease( tarr );
    }
    hb_itemRelease( temp );

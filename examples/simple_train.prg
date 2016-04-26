@@ -2,7 +2,7 @@
 
 Function Main
 
-   LOCAL pAnn
+   LOCAL pAnn, i, j, arr
 
    pAnn := fann_create_standard( 3, {2, 3, 1} )
 
@@ -11,6 +11,11 @@ Function Main
 
    //fann_set_callback( pAnn )
    fann_train_on_file( pAnn, "xor.data", 500000, 1000, 0.001 );
+
+   arr := fann_get_connection_array( pAnn )
+   FOR i := 1 TO Len( arr )
+      ? arr[i,1], arr[i,2], arr[i,3]
+   NEXT
 
    fann_save( pAnn, "xor_float.net");
 
