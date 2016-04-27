@@ -212,7 +212,10 @@ HB_FUNC( FANN_CREATE_FROM_FILE )
 {
 
    struct fann *ann = fann_create_from_file( hb_parc(1) );
-   HB_RETHANDLE( ann );
+   if( ann )
+      HB_RETHANDLE( ann );
+   else
+      hb_ret();
 }
 
 /*
@@ -566,7 +569,10 @@ HB_FUNC( FANN_READ_TRAIN_FROM_FILE )
 
    struct fann_train_data * anndata = fann_read_train_from_file( hb_parc(1) );
 
-   HB_RETHANDLE( anndata );
+   if( anndata )
+      HB_RETHANDLE( anndata );
+   else
+      hb_ret();
 }
 
 /*
@@ -642,6 +648,51 @@ HB_FUNC( FANN_GET_OUTPUT_TRAIN_DATA )
    hb_itemReturn( aMetr );
    hb_itemRelease( aMetr );
 
+}
+
+/*
+ * fann_set_train_data( *pdata, num, pInput, pOutput )
+ */
+
+HB_FUNC( FANN_SET_TRAIN_DATA )
+{
+   struct fann_train_data *pdata = (struct fann_train_data *) HB_PARHANDLE(1);
+   unsigned int uiData = hb_parni(2), ui;
+   PHB_ITEM pArrIn = hb_param( 3, HB_IT_ARRAY ), pArr;
+   PHB_ITEM pArrOut = hb_param( 4, HB_IT_ARRAY );
+
+   if( uiData )
+   {
+      uiData --;
+      if( pArrIn )
+      {
+         for( ui = 0; ui < pdata->num_input; ui++ )
+            (*(pdata->input+uiData))[ui] = hb_arrayGetND( pArrIn, ui+1 );
+      }
+      if( pArrOut )
+      {
+         for( ui = 0; ui < pdata->num_output; ui++ )
+            (*(pdata->output+uiData))[ui] = hb_arrayGetND( pArrOut, ui+1 );
+      }
+   }
+   else
+   {
+      for( uiData = 0; uiData < pdata->num_data; uiData++ )
+      {
+         if( pArrIn )
+         {
+            pArr = hb_arrayGetItemPtr( pArrIn, uiData+1 );
+            for( ui = 0; ui < pdata->num_input; ui++ )
+               (*(pdata->input+uiData))[ui] = hb_arrayGetND( pArr, ui+1 );
+         }
+         if( pArrOut )
+         {
+            pArr = hb_arrayGetItemPtr( pArrOut, uiData+1 );
+            for( ui = 0; ui < pdata->num_output; ui++ )
+               (*(pdata->output+uiData))[ui] = hb_arrayGetND( pArr, ui+1 );
+         }
+      }
+   }
 }
 
 /*
