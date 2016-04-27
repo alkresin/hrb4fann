@@ -1,13 +1,16 @@
 
+#include "fann2hrb.ch"
 
 Function Main
 
-   LOCAL pAnn, i, j, arr
+   LOCAL pAnn, i, arr
+
+   SET DECIMALS TO 6
 
    pAnn := fann_create_standard( 3, {2, 3, 1} )
 
-   fann_set_activation_function_hidden( pAnn, 5 )
-   fann_set_activation_function_output( pAnn, 5 )
+   fann_set_activation_function_hidden( pAnn, FANN_SIGMOID_SYMMETRIC )
+   fann_set_activation_function_output( pAnn, FANN_SIGMOID_SYMMETRIC )
 
    //fann_set_callback( pAnn )
    fann_train_on_file( pAnn, "xor.data", 500000, 1000, 0.001 );

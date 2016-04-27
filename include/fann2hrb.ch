@@ -21,3 +21,12 @@
 #define	FANN_COS_SYMMETRIC              15
 #define	FANN_SIN                        16
 #define	FANN_COS                        17
+
+#define FANN_STOPFUNC_MSE                0
+#define FANN_STOPFUNC_BIT                1
+
+#define FANN_TRAIN_INCREMENTAL           0
+#define FANN_TRAIN_BATCH                 1
+#define FANN_TRAIN_RPROP                 2
+#define FANN_TRAIN_QUICKPROP             3
+#define FANN_TRAIN_SARPROP               4

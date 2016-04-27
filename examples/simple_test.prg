@@ -3,7 +3,7 @@ Function Main
 
    LOCAL pAnn, aOut
 
-   SET DECIMALS TO 10
+   SET DECIMALS TO 6
 
    pAnn := fann_create_from_file( "xor_float.net" )
 

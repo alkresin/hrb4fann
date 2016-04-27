@@ -59,12 +59,13 @@ int FANN_API fn_callback( struct fann *ann, struct fann_train_data *train,
       hb_vmPushDynSym( s_pSymTest );
       hb_vmPushNil();   /* places NIL at self */
 
+      HB_PUSHITEM( ann );
       HB_PUSHITEM( train );
       hb_vmPushLong( ( long int ) max_epochs );
       hb_vmPushLong( ( long int ) epochs_between_reports );
       hb_vmPushDouble( ( long int ) desired_error, 6 );
       hb_vmPushLong( ( long int ) epochs );
-      hb_vmDo( 5 );     /* where iArgCount is the number of pushed parameters */
+      hb_vmDo( 6 );     /* where iArgCount is the number of pushed parameters */
    }
    return 0;
 }
@@ -182,13 +183,24 @@ HB_FUNC( FANN_RUN )
 }
 
 /*
- * fann_randomize_weights( *ann )
+ * fann_randomize_weights( *ann, min_weight, max_weight )
  */
 
 HB_FUNC( FANN_RANDOMIZE_WEIGHTS )
 {
 
    fann_randomize_weights( (struct fann *) HB_PARHANDLE(1), hb_parnd(2), hb_parnd(3) );
+}
+
+/*
+ * fann_init_weights( *ann, pdata )
+ */
+
+HB_FUNC( FANN_INIT_WEIGHTS )
+{
+
+   fann_init_weights( (struct fann *) HB_PARHANDLE(1),
+         (struct fann_train_data *) HB_PARHANDLE(2) );
 }
 
 
@@ -390,7 +402,7 @@ HB_FUNC( FANN_SET_WEIGHT )
 
 
 /*
- * fann_train( *ann, *inputs, *outputs )
+ * fann_train( *ann, *inputs, *desired_outputs )
  */
 
 HB_FUNC( FANN_TRAIN )
@@ -424,6 +436,96 @@ HB_FUNC( FANN_TRAIN )
 }
 
 /*
+ * fann_test( *ann, *inputs, *desired_outputs )
+ */
+
+HB_FUNC( FANN_TEST )
+{
+
+   struct fann *ann = (struct fann *) HB_PARHANDLE(1);
+   fann_type *output, *input, *calc_out;
+   PHB_ITEM pArrIn = hb_param( 2, HB_IT_ARRAY );
+   PHB_ITEM pArrOut = hb_param( 3, HB_IT_ARRAY );
+   unsigned int uiInputs = (unsigned int) hb_arrayLen( pArrIn ), ui;
+   unsigned int uiOutputs = (unsigned int) hb_arrayLen( pArrOut );
+   PHB_ITEM aMetr, temp;
+
+   if( uiInputs != fann_get_num_input( ann ) || uiOutputs != fann_get_num_output( ann ) )
+   {
+      hb_ret();
+      return;
+   }
+
+   input = (fann_type *) malloc( sizeof(fann_type) * uiInputs );
+   for( ui = 0; ui < uiInputs; ui++ )
+      *( input+ui ) = hb_arrayGetND( pArrIn, ui+1 );
+
+   output = (fann_type *) malloc( sizeof(fann_type) * uiOutputs );
+   for( ui = 0; ui < uiOutputs; ui++ )
+      *( output+ui ) = hb_arrayGetND( pArrOut, ui+1 );
+
+
+   calc_out = fann_test( ann, input, output );
+   free( input );
+   free( output );
+
+   aMetr = hb_itemArrayNew( uiOutputs );
+   temp = hb_itemNew( NULL );
+   for( ui = 1; ui <= uiOutputs; ui++ )
+   {
+      hb_itemPutND( temp, *(calc_out+ui-1) );
+      hb_itemArrayPut( aMetr, ui, temp );
+   }
+   hb_itemRelease( temp );
+
+   hb_itemReturn( aMetr );
+   hb_itemRelease( aMetr );
+
+}
+
+/*
+ * fann_get_MSE( *ann )
+ */
+
+HB_FUNC( FANN_GET_MSE )
+{
+
+   hb_retnd( fann_get_MSE( (struct fann *) HB_PARHANDLE(1) ) );
+}
+
+/*
+ * fann_get_bit_fail( *ann )
+ */
+
+HB_FUNC( FANN_GET_BIT_FAIL )
+{
+
+   hb_retnl( fann_get_bit_fail( (struct fann *) HB_PARHANDLE(1) ) );
+}
+
+/*
+ * fann_reset_MSE( *ann )
+ */
+
+HB_FUNC( FANN_RESET_MSE )
+{
+
+   fann_reset_MSE( (struct fann *) HB_PARHANDLE(1) );
+}
+
+/*
+ * fann_train_on_data( *ann, *pdata, max_epochs, epochs_between_reports, desired_error )
+ */
+
+HB_FUNC( FANN_TRAIN_ON_DATA )
+{
+
+   fann_train_on_data( (struct fann *) HB_PARHANDLE(1),
+      (struct fann_train_data *) HB_PARHANDLE(2), (const unsigned int) hb_parni(3),
+      (const unsigned int) hb_parni(4), (const float) hb_parnd(5) );
+}
+
+/*
  * fann_train_on_file( *ann, cFileName, max_epochs, epochs_between_reports, desired_error )
  */
 
@@ -431,6 +533,28 @@ HB_FUNC( FANN_TRAIN_ON_FILE )
 {
 
    fann_train_on_file( (struct fann *) HB_PARHANDLE(1), hb_parc(2), (const unsigned int) hb_parni(3), (const unsigned int) hb_parni(4), (const float) hb_parnd(5) );
+}
+
+/*
+ * fann_train_epoch( *ann, *pdata )
+ */
+
+HB_FUNC( FANN_TRAIN_EPOCH )
+{
+
+   hb_retnd( fann_train_epoch( (struct fann *) HB_PARHANDLE(1),
+      (struct fann_train_data *) HB_PARHANDLE(2) ) );
+}
+
+/*
+ * fann_test_data( *ann, *pdata )
+ */
+
+HB_FUNC( FANN_TEST_DATA )
+{
+
+   hb_retnd( fann_test_data( (struct fann *) HB_PARHANDLE(1),
+      (struct fann_train_data *) HB_PARHANDLE(2) ) );
 }
 
 /*
@@ -443,6 +567,122 @@ HB_FUNC( FANN_READ_TRAIN_FROM_FILE )
    struct fann_train_data * anndata = fann_read_train_from_file( hb_parc(1) );
 
    HB_RETHANDLE( anndata );
+}
+
+/*
+ * fann_create_train( num_data, num_input, num_output )
+ */
+
+HB_FUNC( FANN_CREATE_TRAIN )
+{
+
+   struct fann_train_data * anndata = fann_create_train( (unsigned int) hb_parni(1),
+         (unsigned int) hb_parni(2), (unsigned int) hb_parni(3) );
+
+   HB_RETHANDLE( anndata );
+}
+
+/*
+ * fann_destroy_train( *pdata )
+ */
+
+HB_FUNC( FANN_DESTROY_TRAIN )
+{
+
+   fann_destroy_train( (struct fann_train_data *) HB_PARHANDLE(1) );
+}
+
+/*
+ * fann_get_input_train_data( *pdata, num_input )
+ */
+
+HB_FUNC( FANN_GET_INPUT_TRAIN_DATA )
+{
+
+   struct fann_train_data *pdata = (struct fann_train_data *) HB_PARHANDLE(1);
+   unsigned int num_input, ui, iInput = hb_parni(2) - 1;
+   PHB_ITEM aMetr, temp;
+
+   num_input = pdata->num_input;
+   aMetr = hb_itemArrayNew( num_input );
+   temp = hb_itemNew( NULL );
+   for( ui = 0; ui < num_input; ui++ )
+   {
+      hb_itemPutND( temp, (*(pdata->input+iInput))[ui] );
+      hb_itemArrayPut( aMetr, ui+1, temp );
+   }
+   hb_itemRelease( temp );
+
+   hb_itemReturn( aMetr );
+   hb_itemRelease( aMetr );
+
+}
+
+/*
+ * fann_get_output_train_data( *pdata, num_input )
+ */
+
+HB_FUNC( FANN_GET_OUTPUT_TRAIN_DATA )
+{
+
+   struct fann_train_data *pdata = (struct fann_train_data *) HB_PARHANDLE(1);
+   unsigned int num_output, ui, iOutput = hb_parni(2) - 1;
+   PHB_ITEM aMetr, temp;
+
+   num_output = pdata->num_output;
+   aMetr = hb_itemArrayNew( num_output );
+   temp = hb_itemNew( NULL );
+   for( ui = 0; ui < num_output; ui++ )
+   {
+      hb_itemPutND( temp, (*(pdata->output+iOutput))[ui] );
+      hb_itemArrayPut( aMetr, ui+1, temp );
+   }
+   hb_itemRelease( temp );
+
+   hb_itemReturn( aMetr );
+   hb_itemRelease( aMetr );
+
+}
+
+/*
+ * fann_length_train_data( *pdata )
+ */
+
+HB_FUNC( FANN_LENGTH_TRAIN_DATA )
+{
+
+   hb_retni( fann_length_train_data( (struct fann_train_data *) HB_PARHANDLE(1) ) );
+}
+
+/*
+ * fann_num_input_train_data( *pdata )
+ */
+
+HB_FUNC( FANN_NUM_INPUT_TRAIN_DATA )
+{
+
+   hb_retni( fann_num_input_train_data( (struct fann_train_data *) HB_PARHANDLE(1) ) );
+}
+
+/*
+ * fann_num_output_train_data( *pdata )
+ */
+
+HB_FUNC( FANN_NUM_OUTPUT_TRAIN_DATA )
+{
+
+   hb_retni( fann_num_output_train_data( (struct fann_train_data *) HB_PARHANDLE(1) ) );
+}
+
+/*
+ * fann_save_train( *pdata, cFileName )
+ */
+
+HB_FUNC( FANN_SAVE_TRAIN )
+{
+
+   int iRes = fann_save_train( (struct fann_train_data *) HB_PARHANDLE(1), hb_parc(2) );
+   hb_retl( (iRes==0)? 1 : 0 );
 }
 
 /*
