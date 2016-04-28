@@ -1,3 +1,7 @@
+/*
+ *  Converted to Harbour from the original simple_test.c example program
+ *  of FANN distribution.
+ */
 
 Function Main
 

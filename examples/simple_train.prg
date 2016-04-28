@@ -1,3 +1,7 @@
+/*
+ *  Converted to Harbour from the original simple_train.c example program
+ *  of FANN distribution.
+ */
 
 #include "fann2hrb.ch"
 
