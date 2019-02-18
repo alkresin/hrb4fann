@@ -64,7 +64,7 @@ int FANN_API fn_callback( struct fann *ann, struct fann_train_data *train,
       HB_PUSHITEM( train );
       hb_vmPushLong( ( long int ) max_epochs );
       hb_vmPushLong( ( long int ) epochs_between_reports );
-      hb_vmPushDouble( ( long int ) desired_error, 6 );
+      hb_vmPushDouble( ( double ) desired_error, 6 );
       hb_vmPushLong( ( long int ) epochs );
       hb_vmDo( 6 );     /* where iArgCount is the number of pushed parameters */
       res = hb_parnl( -1 );
