@@ -1,7 +1,9 @@
 
 lib/*
 
+*.exe
 *.a
 *.o
 *.log
 *.out
+*.net

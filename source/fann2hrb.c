@@ -51,6 +51,7 @@ int FANN_API fn_callback( struct fann *ann, struct fann_train_data *train,
 	float desired_error, unsigned int epochs )
 {
 
+   long int res = 0;
    if( s_pSymTest == NULL )
       s_pSymTest = hb_dynsymGetCase( sz_Callback );
 
@@ -66,8 +67,9 @@ int FANN_API fn_callback( struct fann *ann, struct fann_train_data *train,
       hb_vmPushDouble( ( long int ) desired_error, 6 );
       hb_vmPushLong( ( long int ) epochs );
       hb_vmDo( 6 );     /* where iArgCount is the number of pushed parameters */
+      res = hb_parnl( -1 );
    }
-   return 0;
+   return res;
 }
 
 /*
@@ -392,7 +394,7 @@ HB_FUNC( FANN_GET_CONNECTION_ARRAY )
 }
 
 /*
- * fann_set_weight( *ann )
+ * fann_set_weight( *ann, from_neuron, to_neuron, weight )
  */
 
 HB_FUNC( FANN_SET_WEIGHT )
