@@ -9,8 +9,7 @@ Function Main
 
    LOCAL pAnn, pData, i, iLen, aInput, aOutput
    LOCAL calc_out
-   LOCAL num_input := 2, num_output := 1
-   LOCAL num_layers := 3, num_neurons_hidden := 3
+   LOCAL num_input := 2, num_neurons_hidden := 3, num_output := 1
    LOCAL desired_error := 0
    LOCAL max_epochs := 1000
    LOCAL epochs_between_reports := 10
@@ -18,7 +17,7 @@ Function Main
    SET DECIMALS TO 6
 
    ? "Creating network."
-   pAnn := fann_create_standard( num_layers, { num_input, num_neurons_hidden, num_output } );
+   pAnn := fann_create_standard( { num_input, num_neurons_hidden, num_output } );
 
    pData := fann_read_train_from_file( "xor.data" )
 

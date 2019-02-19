@@ -42,6 +42,12 @@ int FANN_API dummy_callback( struct fann *ann, struct fann_train_data *train,
 	unsigned int max_epochs, unsigned int epochs_between_reports, 
 	float desired_error, unsigned int epochs )
 {
+   HB_SYMBOL_UNUSED( ann );
+   HB_SYMBOL_UNUSED( train );
+   HB_SYMBOL_UNUSED( max_epochs );
+   HB_SYMBOL_UNUSED( epochs_between_reports );
+   HB_SYMBOL_UNUSED( desired_error );
+   HB_SYMBOL_UNUSED( epochs );
    //printf("Epochs     %8d. MSE: %.5f. Desired-MSE: %.5f\n", epochs, fann_get_MSE(ann), desired_error);
    return 0;
 }
@@ -73,21 +79,16 @@ int FANN_API fn_callback( struct fann *ann, struct fann_train_data *train,
 }
 
 /*
- * *ann = fann_create_standard( num_layers, { num_input, ..., num_output } )
+ * *ann = fann_create_standard( { num_input, ..., num_output } )
  */
 
 HB_FUNC( FANN_CREATE_STANDARD )
 {
 
    struct fann *ann;
-   PHB_ITEM pArr = hb_param( 2, HB_IT_ARRAY );
-   unsigned int iLayers = hb_parni(1), ui, * pLayers;
+   PHB_ITEM pArr = hb_param( 1, HB_IT_ARRAY );
+   unsigned int iLayers = hb_arrayLen( pArr ), ui, * pLayers;
 
-   if( iLayers != hb_arrayLen( pArr ) )
-   {
-      hb_ret();
-      return;
-   }
    pLayers = (unsigned int *) malloc( sizeof(unsigned int) * iLayers );
    for( ui = 0; ui < iLayers; ui++ )
       *( pLayers+ui ) = hb_arrayGetNI( pArr, ui+1 );
@@ -99,21 +100,16 @@ HB_FUNC( FANN_CREATE_STANDARD )
 }
 
 /*
- * *ann = fann_create_sparse( connection_rate, num_layers, { num_input, ..., num_output } )
+ * *ann = fann_create_sparse( connection_rate, { num_input, ..., num_output } )
  */
 
 HB_FUNC( FANN_CREATE_SPARSE )
 {
 
    struct fann *ann;
-   PHB_ITEM pArr = hb_param( 3, HB_IT_ARRAY );
-   unsigned int iLayers = hb_parni(2), ui, * pLayers;
+   PHB_ITEM pArr = hb_param( 2, HB_IT_ARRAY );
+   unsigned int iLayers = hb_arrayLen( pArr ), ui, * pLayers;
 
-   if( iLayers != hb_arrayLen( pArr ) )
-   {
-      hb_ret();
-      return;
-   }
    pLayers = (unsigned int *) malloc( sizeof(unsigned int) * iLayers );
    for( ui = 0; ui < iLayers; ui++ )
       *( pLayers+ui ) = hb_arrayGetNI( pArr, ui+1 );

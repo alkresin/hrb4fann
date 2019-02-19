@@ -8,7 +8,7 @@
 Function Main
 
    LOCAL pAnn, pTrainData, pTestData
-   LOCAL num_layers := 3, num_neurons_hidden := 96
+   LOCAL num_neurons_hidden := 96
    LOCAL desired_error := 0.001, i := 0, iLen
    LOCAL cDataPath := "../../FANN_220/datasets/"
    LOCAL cTrainFile := "robot.train", cTestFile := "robot.test"
@@ -26,7 +26,7 @@ Function Main
       RETURN Nil
    ENDIF
 
-   pAnn := fann_create_standard( num_layers, { fann_num_input_train_data(pTrainData), ;
+   pAnn := fann_create_standard( { fann_num_input_train_data(pTrainData), ;
               num_neurons_hidden, fann_num_output_train_data(pTrainData) } )
 
    ? "Training network."

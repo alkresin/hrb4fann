@@ -11,7 +11,7 @@ Function Main
 
    SET DECIMALS TO 6
 
-   pAnn := fann_create_standard( 3, {2, 3, 1} )
+   pAnn := fann_create_standard( {2, 3, 1} )
 
    fann_set_activation_function_hidden( pAnn, FANN_SIGMOID_SYMMETRIC )
    fann_set_activation_function_output( pAnn, FANN_SIGMOID_SYMMETRIC )
